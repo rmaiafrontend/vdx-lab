@@ -1,0 +1,183 @@
+{
+  "nome": "Porta de giro com fixo",
+  "descricao": "Porta + fixo lateral, com 2 modos de instalação (caso 005).",
+  "categoria_id": 2,
+  "modoDeProducao": "VAO",
+  "ordem": 20,
+  "ativo": true,
+  "vidros_elegiveis": [
+    "INCOLOR_10", "INCOLOR_12",
+    "FUME_10", "FUME_12"
+  ],
+  "variables": [
+    {
+      "codigo": "Pu",
+      "label": "Folga em U",
+      "kind": "TECHNICAL_PARAM",
+      "nivel": "ORCAMENTO",
+      "unit": "mm",
+      "required": false,
+      "default_value": "12",
+      "ordem": 1
+    },
+    {
+      "codigo": "Pferragem",
+      "label": "Folga em ferragem",
+      "kind": "TECHNICAL_PARAM",
+      "nivel": "ORCAMENTO",
+      "unit": "mm",
+      "required": false,
+      "default_value": "5",
+      "ordem": 2
+    },
+    {
+      "codigo": "Lvao",
+      "label": "Largura do vão",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "min_value": "1500",
+      "max_value": "3000",
+      "ordem": 3
+    },
+    {
+      "codigo": "Avao",
+      "label": "Altura do vão",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "min_value": "1900",
+      "max_value": "2800",
+      "ordem": 4
+    },
+    {
+      "codigo": "Lporta",
+      "label": "Largura da porta",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "default_value": "900",
+      "min_value": "700",
+      "max_value": "1100",
+      "ordem": 5
+    },
+    {
+      "codigo": "TipoInstalacao",
+      "label": "Tipo de instalação",
+      "kind": "OPTION_LIST",
+      "nivel": "VAO",
+      "required": true,
+      "default_value": "U",
+      "options": [
+        { "codigo": "U", "label": "Perfil U" },
+        { "codigo": "FERRAGEM", "label": "Ferragem" }
+      ],
+      "ordem": 6
+    }
+  ],
+  "computed_values": [
+    {
+      "codigo": "Lfixo_bruto",
+      "expression": "Lvao - Lporta",
+      "scope": "VAO",
+      "order_in_scope": 1
+    },
+    {
+      "codigo": "Aporta",
+      "expression": "Avao - 80",
+      "scope": "VAO",
+      "order_in_scope": 2
+    }
+  ],
+  "piece_groups": [
+    {
+      "codigo": "PORTA",
+      "label": "Folha da porta",
+      "quantity_expression": "1",
+      "ordem": 1,
+      "piece_roles": [
+        {
+          "codigo": "UNICO",
+          "label": "Porta",
+          "selector_kind": "ALL",
+          "width_expression": "Lporta - 10",
+          "height_expression": "Aporta",
+          "ordem": 1
+        }
+      ]
+    },
+    {
+      "codigo": "FIXO",
+      "label": "Fixo lateral",
+      "quantity_expression": "1",
+      "ordem": 2,
+      "piece_roles": [
+        {
+          "codigo": "FIXO_U",
+          "label": "Fixo (instalação U)",
+          "selector_kind": "ALL",
+          "condition": "TipoInstalacao == 'U'",
+          "width_expression": "Lfixo_bruto - 2*Pu",
+          "height_expression": "Avao - 2*Pu",
+          "ordem": 1
+        },
+        {
+          "codigo": "FIXO_FERRAGEM",
+          "label": "Fixo (instalação ferragem)",
+          "selector_kind": "ALL",
+          "condition": "TipoInstalacao == 'FERRAGEM'",
+          "width_expression": "Lfixo_bruto - 2*Pferragem",
+          "height_expression": "Avao - 2*Pferragem",
+          "ordem": 2
+        }
+      ]
+    }
+  ],
+  "pricing_rules": [
+    {
+      "codigo": "VIDRO_M2",
+      "label": "Vidro por m²",
+      "component_kind": "VIDRO",
+      "basis": "PER_M2",
+      "applies_to": "TIPOLOGIA",
+      "expression": "precoVidro(VidroId)",
+      "ordem": 1,
+      "ativo": true
+    },
+    {
+      "codigo": "FERRAGEM_U",
+      "label": "Ferragem (perfil U)",
+      "component_kind": "FERRAGEM",
+      "basis": "PER_VAO",
+      "applies_to": "TIPOLOGIA",
+      "condition": "TipoInstalacao == 'U'",
+      "expression": "420",
+      "ordem": 2,
+      "ativo": true
+    },
+    {
+      "codigo": "FERRAGEM_FE",
+      "label": "Ferragem (ferragem dedicada)",
+      "component_kind": "FERRAGEM",
+      "basis": "PER_VAO",
+      "applies_to": "TIPOLOGIA",
+      "condition": "TipoInstalacao == 'FERRAGEM'",
+      "expression": "380",
+      "ordem": 3,
+      "ativo": true
+    },
+    {
+      "codigo": "INSTALACAO",
+      "label": "Instalação",
+      "component_kind": "INSTALACAO",
+      "basis": "PER_VAO",
+      "applies_to": "TIPOLOGIA",
+      "expression": "300",
+      "ordem": 4,
+      "ativo": true
+    }
+  ]
+}

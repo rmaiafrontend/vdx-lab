@@ -1,0 +1,16 @@
+[
+  { "codigo": "INCOLOR_6",  "label": "Incolor 6 mm",  "cor_codigo": "INCOLOR", "espessura": 6,  "preco_m2": 220, "ordem": 1,  "ativo": true },
+  { "codigo": "INCOLOR_8",  "label": "Incolor 8 mm",  "cor_codigo": "INCOLOR", "espessura": 8,  "preco_m2": 280, "ordem": 2,  "ativo": true },
+  { "codigo": "INCOLOR_10", "label": "Incolor 10 mm", "cor_codigo": "INCOLOR", "espessura": 10, "preco_m2": 360, "ordem": 3,  "ativo": true },
+  { "codigo": "INCOLOR_12", "label": "Incolor 12 mm", "cor_codigo": "INCOLOR", "espessura": 12, "preco_m2": 460, "ordem": 4,  "ativo": true },
+
+  { "codigo": "FUME_6",     "label": "Fumê 6 mm",     "cor_codigo": "FUME",    "espessura": 6,  "preco_m2": 260, "ordem": 5,  "ativo": true },
+  { "codigo": "FUME_8",     "label": "Fumê 8 mm",     "cor_codigo": "FUME",    "espessura": 8,  "preco_m2": 330, "ordem": 6,  "ativo": true },
+  { "codigo": "FUME_10",    "label": "Fumê 10 mm",    "cor_codigo": "FUME",    "espessura": 10, "preco_m2": 420, "ordem": 7,  "ativo": true },
+  { "codigo": "FUME_12",    "label": "Fumê 12 mm",    "cor_codigo": "FUME",    "espessura": 12, "preco_m2": 540, "ordem": 8,  "ativo": true },
+
+  { "codigo": "VERDE_6",    "label": "Verde 6 mm",    "cor_codigo": "VERDE",   "espessura": 6,  "preco_m2": 250, "ordem": 9,  "ativo": true },
+  { "codigo": "VERDE_8",    "label": "Verde 8 mm",    "cor_codigo": "VERDE",   "espessura": 8,  "preco_m2": 320, "ordem": 10, "ativo": true },
+  { "codigo": "VERDE_10",   "label": "Verde 10 mm",   "cor_codigo": "VERDE",   "espessura": 10, "preco_m2": 410, "ordem": 11, "ativo": true },
+  { "codigo": "VERDE_12",   "label": "Verde 12 mm",   "cor_codigo": "VERDE",   "espessura": 12, "preco_m2": 520, "ordem": 12, "ativo": true }
+]

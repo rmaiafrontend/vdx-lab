@@ -1,0 +1,5 @@
+[
+  { "codigo": "INCOLOR", "label": "Incolor", "ordem": 1, "ativo": true },
+  { "codigo": "FUME", "label": "Fumê", "ordem": 2, "ativo": true },
+  { "codigo": "VERDE", "label": "Verde", "ordem": 3, "ativo": true }
+]

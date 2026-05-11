@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Categoria {
+  id         Int         @id @default(autoincrement())
+  nome       String
+  ordem      Int         @default(0)
+  ativo      Boolean     @default(true)
+  tipologias Tipologia[]
+}
+
+model Tipologia {
+  id                    Int       @id @default(autoincrement())
+  categoriaId           Int
+  categoria             Categoria @relation(fields: [categoriaId], references: [id])
+  nome                  String
+  descricao             String?
+  modoDeProducao        String // VAO | MEDIDA_DE_PRODUCAO
+  imagemUrl             String?
+  desenhoEsquematicoUrl String?
+  renderKey             String? // chave do template no vdx-render-embed (porta-vidro, varanda, etc.)
+  ordem                 Int       @default(0)
+  ativo                 Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  variables              Variable[]
+  computedValues         ComputedValue[]
+  pieceGroups            PieceGroup[]
+  specificationTemplates SpecificationTemplate[]
+  pricingRules           PricingRule[]
+  vidros                 TipologiaVidro[]
+}
+
+model Variable {
+  id           Int       @id @default(autoincrement())
+  tipologiaId  Int
+  tipologia    Tipologia @relation(fields: [tipologiaId], references: [id], onDelete: Cascade)
+  codigo       String
+  label        String
+  descricao    String?
+  kind         String // DIMENSION | COUNT | TECHNICAL_PARAM | BOOLEAN | OPTION_LIST
+  nivel        String // ORCAMENTO | VAO | PECA
+  unit         String?
+  required     Boolean   @default(true)
+  defaultValue String?
+  minValue     String?
+  maxValue     String?
+  options      String? // JSON: [{codigo, label}] — apenas para kind=OPTION_LIST
+  ordem        Int       @default(0)
+
+  @@unique([tipologiaId, codigo])
+}
+
+model ComputedValue {
+  id           Int         @id @default(autoincrement())
+  tipologiaId  Int
+  tipologia    Tipologia   @relation(fields: [tipologiaId], references: [id], onDelete: Cascade)
+  codigo       String
+  expression   String
+  scope        String // VAO | GROUP | PIECE | ORCAMENTO_PECA
+  pieceGroupId Int?
+  pieceGroup   PieceGroup? @relation(fields: [pieceGroupId], references: [id], onDelete: Cascade)
+  orderInScope Int         @default(0)
+
+  @@unique([tipologiaId, codigo, scope, pieceGroupId])
+}
+
+model PieceGroup {
+  id                 Int       @id @default(autoincrement())
+  tipologiaId        Int
+  tipologia          Tipologia @relation(fields: [tipologiaId], references: [id], onDelete: Cascade)
+  codigo             String
+  label              String
+  quantityExpression String
+  ordem              Int       @default(0)
+
+  pieceRoles     PieceRole[]
+  computedValues ComputedValue[]
+
+  @@unique([tipologiaId, codigo])
+}
+
+model PieceRole {
+  id               Int        @id @default(autoincrement())
+  pieceGroupId     Int
+  pieceGroup       PieceGroup @relation(fields: [pieceGroupId], references: [id], onDelete: Cascade)
+  codigo           String
+  label            String
+  selectorKind     String // ALL | FIRST | LAST | FIRST_AND_LAST | EXCEPT_FIRST_LAST | INDEX | INDEX_LIST | RANGE | ODD | EVEN | EXPRESSION
+  selectorValue    String?
+  condition        String?
+  widthExpression  String
+  heightExpression String
+  ordem            Int        @default(0)
+
+  @@unique([pieceGroupId, codigo])
+}
+
+model SpecificationTemplate {
+  id              Int       @id @default(autoincrement())
+  tipologiaId     Int
+  tipologia       Tipologia @relation(fields: [tipologiaId], references: [id], onDelete: Cascade)
+  codigo          String
+  label           String
+  schemaAtributos String // JSON: { [attr]: { type, required?, default?, source?, ... } }
+  requiredMin     Int       @default(0)
+  requiredMax     Int?
+  ordem           Int       @default(0)
+
+  @@unique([tipologiaId, codigo])
+}
+
+model PricingRule {
+  id             Int       @id @default(autoincrement())
+  tipologiaId    Int
+  tipologia      Tipologia @relation(fields: [tipologiaId], references: [id], onDelete: Cascade)
+  codigo         String
+  label          String?
+  componentKind  String // VIDRO | FERRAGEM | INSTALACAO | MAO_OBRA | BENEFICIAMENTO | OUTRO
+  basis          String // PER_M2 | PER_PIECE | PER_GROUP | PER_VAO | PER_ORCAMENTO | PER_SPECIFICATION | FIXED
+  appliesTo      String // TIPOLOGIA | GROUP_CODE | ROLE_CODE | SPECIFICATION_TYPE
+  appliesToValue String?
+  expression     String
+  condition      String?
+  ordem          Int       @default(0)
+  ativo          Boolean   @default(true)
+
+  @@unique([tipologiaId, codigo])
+}
+
+// Catálogos auxiliares — alimentam builtins do evaluator (precoVidro, precoTorre)
+
+model CorVidro {
+  id     Int     @id @default(autoincrement())
+  codigo String  @unique
+  label  String
+  ordem  Int     @default(0)
+  ativo  Boolean @default(true)
+  vidros Vidro[]
+}
+
+model Vidro {
+  id        Int      @id @default(autoincrement())
+  codigo    String   @unique
+  label     String
+  corId     Int
+  cor       CorVidro @relation(fields: [corId], references: [id], onDelete: Restrict)
+  espessura Int // mm
+  precoM2   Float
+  ordem     Int      @default(0)
+  ativo     Boolean  @default(true)
+
+  tipologias TipologiaVidro[]
+
+  @@unique([corId, espessura])
+}
+
+model TipologiaVidro {
+  id          Int       @id @default(autoincrement())
+  tipologiaId Int
+  tipologia   Tipologia @relation(fields: [tipologiaId], references: [id], onDelete: Cascade)
+  vidroId     Int
+  vidro       Vidro     @relation(fields: [vidroId], references: [id], onDelete: Cascade)
+  ordem       Int       @default(0)
+
+  @@unique([tipologiaId, vidroId])
+}
+
+model ModeloTorre {
+  id               Int     @id @default(autoincrement())
+  codigo           String  @unique
+  label            String
+  preco            Float
+  maxFurosPorTorre Int     @default(3)
+  ordem            Int     @default(0)
+  ativo            Boolean @default(true)
+}

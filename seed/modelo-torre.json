@@ -1,0 +1,26 @@
+[
+  {
+    "codigo": "20",
+    "label": "Torre 20",
+    "preco": 320,
+    "max_furos_por_torre": 2,
+    "ordem": 1,
+    "ativo": true
+  },
+  {
+    "codigo": "30",
+    "label": "Torre 30",
+    "preco": 420,
+    "max_furos_por_torre": 3,
+    "ordem": 2,
+    "ativo": true
+  },
+  {
+    "codigo": "40",
+    "label": "Torre 40",
+    "preco": 560,
+    "max_furos_por_torre": 3,
+    "ordem": 3,
+    "ativo": true
+  }
+]

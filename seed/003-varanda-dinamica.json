@@ -1,0 +1,156 @@
+{
+  "nome": "Varanda dinâmica",
+  "descricao": "Varanda com 2 cantos + N folhas centrais (caso 003).",
+  "categoria_id": 1,
+  "modoDeProducao": "VAO",
+  "ordem": 10,
+  "ativo": true,
+  "vidros_elegiveis": [
+    "INCOLOR_6", "INCOLOR_8", "INCOLOR_10",
+    "FUME_8", "FUME_10",
+    "VERDE_8", "VERDE_10"
+  ],
+  "variables": [
+    {
+      "codigo": "Lvao",
+      "label": "Largura do vão",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "min_value": "2000",
+      "max_value": "8000",
+      "ordem": 1
+    },
+    {
+      "codigo": "Avao",
+      "label": "Altura do vão",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "min_value": "1800",
+      "max_value": "2800",
+      "ordem": 2
+    },
+    {
+      "codigo": "Nfolhas",
+      "label": "Quantidade de folhas",
+      "kind": "COUNT",
+      "nivel": "VAO",
+      "unit": "un",
+      "required": true,
+      "min_value": "3",
+      "max_value": "10",
+      "default_value": "5",
+      "ordem": 3
+    },
+    {
+      "codigo": "Pperfil",
+      "label": "Espessura do perfil",
+      "kind": "TECHNICAL_PARAM",
+      "nivel": "ORCAMENTO",
+      "unit": "mm",
+      "required": false,
+      "default_value": "50",
+      "ordem": 4
+    },
+    {
+      "codigo": "Pcanto",
+      "label": "Espessura do canto",
+      "kind": "TECHNICAL_PARAM",
+      "nivel": "ORCAMENTO",
+      "unit": "mm",
+      "required": false,
+      "default_value": "75",
+      "ordem": 5
+    }
+  ],
+  "computed_values": [
+    {
+      "codigo": "Lutil",
+      "expression": "Lvao - 2*Pcanto - (Nfolhas - 1)*Pperfil",
+      "scope": "VAO",
+      "order_in_scope": 1
+    },
+    {
+      "codigo": "Lfolha",
+      "expression": "Lutil / Nfolhas",
+      "scope": "VAO",
+      "order_in_scope": 2
+    },
+    {
+      "codigo": "Afolha",
+      "expression": "Avao - 100",
+      "scope": "VAO",
+      "order_in_scope": 3
+    }
+  ],
+  "piece_groups": [
+    {
+      "codigo": "FOLHAS",
+      "label": "Folhas da varanda",
+      "quantity_expression": "Nfolhas",
+      "ordem": 1,
+      "piece_roles": [
+        {
+          "codigo": "CANTO_ESQ",
+          "label": "Canto esquerdo",
+          "selector_kind": "FIRST",
+          "width_expression": "Lfolha + Pcanto",
+          "height_expression": "Afolha",
+          "ordem": 1
+        },
+        {
+          "codigo": "CENTRAL",
+          "label": "Folha central",
+          "selector_kind": "EXCEPT_FIRST_LAST",
+          "width_expression": "Lfolha",
+          "height_expression": "Afolha",
+          "ordem": 2
+        },
+        {
+          "codigo": "CANTO_DIR",
+          "label": "Canto direito",
+          "selector_kind": "LAST",
+          "width_expression": "Lfolha + Pcanto",
+          "height_expression": "Afolha",
+          "ordem": 3
+        }
+      ]
+    }
+  ],
+  "pricing_rules": [
+    {
+      "codigo": "VIDRO_M2",
+      "label": "Vidro por m²",
+      "component_kind": "VIDRO",
+      "basis": "PER_M2",
+      "applies_to": "TIPOLOGIA",
+      "expression": "precoVidro(VidroId)",
+      "ordem": 1,
+      "ativo": true
+    },
+    {
+      "codigo": "FERRAGEM_CANTO",
+      "label": "Ferragem por canto",
+      "component_kind": "FERRAGEM",
+      "basis": "PER_PIECE",
+      "applies_to": "ROLE_CODE",
+      "applies_to_value": "CANTO_ESQ,CANTO_DIR",
+      "expression": "180",
+      "ordem": 2,
+      "ativo": true
+    },
+    {
+      "codigo": "INSTALACAO_VAO",
+      "label": "Instalação por vão",
+      "component_kind": "INSTALACAO",
+      "basis": "PER_VAO",
+      "applies_to": "TIPOLOGIA",
+      "expression": "350 + 80 * Nfolhas",
+      "ordem": 3,
+      "ativo": true
+    }
+  ]
+}

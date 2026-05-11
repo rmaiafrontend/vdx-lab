@@ -1,0 +1,116 @@
+{
+  "nome": "Porta dupla com bandeira em 4 partes",
+  "descricao": "2 portas embaixo + 4 bandeiras fixas em cima. Vidro da bandeira com sobretaxa de 20%.",
+  "categoria_id": 2,
+  "modoDeProducao": "VAO",
+  "ordem": 30,
+  "ativo": true,
+  "vidros_elegiveis": [
+    "INCOLOR_10", "INCOLOR_12",
+    "FUME_10", "FUME_12"
+  ],
+  "variables": [
+    {
+      "codigo": "Lvao",
+      "label": "Largura do vão",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "default_value": "2400",
+      "min_value": "1800",
+      "max_value": "4000",
+      "ordem": 1
+    },
+    {
+      "codigo": "Avao",
+      "label": "Altura do vão",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "default_value": "2700",
+      "min_value": "2200",
+      "max_value": "3500",
+      "ordem": 2
+    },
+    {
+      "codigo": "Aband",
+      "label": "Altura da bandeira",
+      "kind": "DIMENSION",
+      "nivel": "VAO",
+      "unit": "mm",
+      "required": true,
+      "default_value": "500",
+      "min_value": "300",
+      "max_value": "900",
+      "ordem": 3
+    }
+  ],
+  "computed_values": [
+    {
+      "codigo": "Aporta",
+      "expression": "Avao - Aband",
+      "scope": "VAO",
+      "order_in_scope": 1
+    }
+  ],
+  "piece_groups": [
+    {
+      "codigo": "PORTAS",
+      "label": "Portas",
+      "quantity_expression": "2",
+      "ordem": 1,
+      "piece_roles": [
+        {
+          "codigo": "PADRAO",
+          "label": "Folha de porta",
+          "selector_kind": "ALL",
+          "width_expression": "Lvao/2 - 5",
+          "height_expression": "Aporta",
+          "ordem": 1
+        }
+      ]
+    },
+    {
+      "codigo": "BANDEIRA",
+      "label": "Bandeiras",
+      "quantity_expression": "4",
+      "ordem": 2,
+      "piece_roles": [
+        {
+          "codigo": "PADRAO",
+          "label": "Bandeira fixa",
+          "selector_kind": "ALL",
+          "width_expression": "Lvao/4 - 5",
+          "height_expression": "Aband",
+          "ordem": 1
+        }
+      ]
+    }
+  ],
+  "pricing_rules": [
+    {
+      "codigo": "VIDRO_PORTAS",
+      "label": "Vidro das portas",
+      "component_kind": "VIDRO",
+      "basis": "PER_M2",
+      "applies_to": "GROUP_CODE",
+      "applies_to_value": "PORTAS",
+      "expression": "precoVidro(VidroId)",
+      "ordem": 1,
+      "ativo": true
+    },
+    {
+      "codigo": "VIDRO_BANDEIRA",
+      "label": "Vidro da bandeira (+20%)",
+      "component_kind": "VIDRO",
+      "basis": "PER_M2",
+      "applies_to": "GROUP_CODE",
+      "applies_to_value": "BANDEIRA",
+      "expression": "precoVidro(VidroId) * 1.2",
+      "ordem": 2,
+      "ativo": true
+    }
+  ]
+}
